@@ -14,10 +14,10 @@ switch checkflag.evap
           %  X.gas.h2o2 = ndot.h2o2*evap_cal / (ndot.o2 + evap_cal*(ndot.h2o2 + ndot.h2o));
           %  X.gas.h2o = ndot.h2o*evap_cal / (ndot.o2 + evap_cal* (ndot.h2o2 + ndot.h2o));
              X.liquid.h2o2 = ndot.h2o2 / (ndot.h2o2 + ndot.h2o);
-             X.liquid.h2o = ndot.h2o / (ndot.h2o2 + ndot.h2o);    
+             X.liquid.h2o = ndot.h2o / (ndot.h2o2 + ndot.h2o);
 
              % % partial  pressure
-       
+
              pressure = p_saturationT(temp.pressure,T);
              pressure.partial.h2o2 = pressure.sat.h2o2 * X.liquid.h2o2;
              pressure.partial.h2o = pressure.sat.h2o * X.liquid.h2o;
@@ -27,7 +27,7 @@ switch checkflag.evap
 
              eqn1 = pressure.cal - (pressure.partial.h2o2 + pressure.partial.h2o + pressure.partial.o2) == 0;
 
-                 % % enthalpy conservation 
+                 % % enthalpy conservation
 
                  h = enthalpyT(temp,h,T);
                  h.gas = (ndot.o2 * h.enthalpy.gas.o2 + evap * (ndot.h2o2 * h.enthalpy.gas.h2o2 + ndot.h2o * h.enthalpy.gas.h2o));
@@ -47,22 +47,26 @@ switch checkflag.evap
              [T_cloum,T_row] = size(T_sol);
 
              for ii = 1:T_cloum
-                    if evap_sol(ii) >= && evap_sol(ii) < 1
+                    if evap_sol(ii) >= 0 && evap_sol(ii) < 1
                           if T_sol(ii) < 299
+                             res(ii) = 10000;
                              continue
                           elseif T_sol(ii) > 1600
+                             res(ii) = 10000;
                               continue
                           else
                               res(ii) = abs(real(T_sol(ii))-T_cal);
                           end
                     elseif  evap_sol(ii) >= 1
                           if T_sol(ii) < 299
+                             res(ii) = 10000;
                              continue
                           elseif T_sol(ii) > 1600
+                              res(ii) = 10000;
                               continue
                           else
                               res(ii) = abs(real(T_sol(ii))-T_cal);
-                          end   
+                          end
 
                           continue
                      end
@@ -78,10 +82,11 @@ switch checkflag.evap
             evap = 1;
             syms T2
 
-            % % enthalpy conservation 
+            % % enthalpy conservation
 
             h = enthalpyT(temp,h,T2);
             h.gas = (ndot.o2 * h.enthalpy.gas.o2 + evap * (ndot.h2o2 * h.enthalpy.gas.h2o2 + ndot.h2o * h.enthalpy.gas.h2o));
+            h.liquid = (1-evap)*(ndot.h2o2 * h.entalpy.liquid.h2o2 + ndot.h2o * h.entalpy.liquid.h2o);
             eqn2 = h.total.initial - h.gas - h.liquid == 0;
             T_cal = temp.cal.K;
             assume(T2,'real')
@@ -92,10 +97,12 @@ switch checkflag.evap
             count = 0;
 
             for ii = 1:T_cloum
-                    
+
                           if T_sol(ii) < 299
+                              res(ii) = 10000;
                              continue
                           elseif T_sol(ii) > 1600
+                              res(ii) = 10000;
                               continue
                           else
                               res(ii) = abs(real(T_sol(ii))-T_cal);
@@ -109,7 +116,8 @@ switch checkflag.evap
             disp('program has no solution')
             end
 
-            [res_number,res_locate] = max(res);
+            %[res_number,res_locate] = max(res);
+            [res_number,res_locate] = min(res);
             T_cal = T_sol(res_locate);
             evap_cal = 1;
             temp.cal.K = T_cal;

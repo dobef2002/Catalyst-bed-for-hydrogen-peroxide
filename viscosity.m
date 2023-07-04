@@ -9,15 +9,17 @@ if temp.cal.C < 150
    mu.liquid.h2o2 = 0.001 * 0.2544152386* exp(332762538.8/(R*temp.cal.K^3)); % cpoise
 
 else
-   mu.liquid.h2o2 = 0.001 * 0.2544152386* exp(332762538.8/(R*(150+273.15)^3)); % cpoise
+   %mu.liquid.h2o2 = 0.001 * 0.2544152386* exp(332762538.8/(R*(150+273.15)^3)); % cpoise
+   mu.liquid.h2o2 = 0.001 * 0.2544152386* exp(332762538.8/(R*temp.cal.K^3)); % cpoise
 end
 
 if temp.cal.C < 100
-   B = (1.3272*(20-temp.cal.C) - 0.001053*(temp.cal.C -20)^2)/(temp.cal.C + 105); 
+   B = (1.3272*(20-temp.cal.C) - 0.001053*(temp.cal.C -20)^2)/(temp.cal.C + 105);
    mu.liquid.h2o = 1.002*0.001*10^B;
 
 else
-   B = (1.3272*(20-100) - 0.001053*(100 -20)^2)/(100 + 105); 
+ %  B = (1.3272*(20-100) - 0.001053*(100 -20)^2)/(100 + 105);
+   B = (1.3272*(20-temp.cal.C) - 0.001053*(temp.cal.C -20)^2)/(temp.cal.C + 105);
    mu.liquid.h2o = 1.002*0.001*10^B;
 end
 

@@ -3,6 +3,7 @@ function ro = density(temp)
 % unit kg/m^3
 
 temp.cal.C = temp.cal.K -273.15;
+%{
 
 if temp.cal.K > 425  % h2o2 boiling point
 
@@ -10,6 +11,7 @@ if temp.cal.K > 425  % h2o2 boiling point
 else
     temp.liquid.h2o2.K = temp.cal.K;
 end
+%}
 
 ro.h2o2 = 1597 + 0.0784*temp.liquid.h2o2.K - 0.00197*temp.liquid.h2o2.K^2;
 
@@ -23,10 +25,11 @@ G = 18.15972510^(-3);
 
 if temp.cal.C >= 100
 
-    temp.liquid.h2o.C = 100;
+    %temp.liquid.h2o.C = 100;
+    temp.liquid.h2o.C = temp.cal.C;
 else
     temp.liquid.h2o.C = temp.cal.C;
-end    
+end
 
 ro.h2o = (10^3)*(A + B*temp.liquid.h2o.C +C*temp.liquid.h2o.C^2 + D*temp.liquid.h2o.C^3 + E*temp.liquid.h2o.C^4 + F*temp.liquid.h2o.C^5)/(1+G*temp.liquid.h2o.C);
 
